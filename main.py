@@ -1,4 +1,4 @@
-from load_model import *
+from models.load_model import *
 
 
 # Get the question
@@ -11,7 +11,7 @@ question_client = question()
 # Get the answer of the model
 def model(instructions, question):
     output_model = client.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-2.5-flash",
                 contents= question,
                 config = {
                     'system_instruction': instructions
@@ -20,3 +20,4 @@ def model(instructions, question):
     return output_model.text
 
 output_model = model(bussines_instruction, question_client)
+print(f'<SEXTA FEIRA>: {output_model}')
