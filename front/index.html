@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sexta-Feira AI - Inteligência Artificial Avançada</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f7f9fc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Layout principal */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* ========= SIDEBAR (HISTÓRICO) ========= */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e9edf2;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
+        }
+
+        .logo-icon i {
+            font-size: 22px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #be53e6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            font-weight: 500;
+        }
+
+        /* Busca no histórico */
+        .search-history {
+            margin-top: 8px;
+            position: relative;
+        }
+
+        .search-history i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .search-history input {
+            width: 100%;
+            padding: 12px 12px 12px 38px;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            background: white;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-history input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Lista de histórico */
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            border-radius: 18px;
+            background: white;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .history-item:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+            transform: translateX(2px);
+        }
+
+        .history-icon {
+            width: 36px;
+            height: 36px;
+            background: #eef2ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4f46e5;
+        }
+
+        .history-content {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .history-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            font-size: 0.7rem;
+            color: #6c7a91;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-item.active {
+            background: linear-gradient(135deg, #eef2ff, #ffffff);
+            border-left: 3px solid #8b5cf6;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+        }
+
+        /* Sidebar footer (novo chat) */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #e9edf2;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            background: linear-gradient(95deg, #4f46e5, #7c3aed);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .new-chat-btn:hover {
+            transform: scale(0.98);
+            background: linear-gradient(95deg, #4338ca, #6d28d9);
+        }
+
+        /* ========= MAIN CHAT AREA ========= */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Top bar */
+        .top-bar {
+            padding: 20px 32px;
+            border-bottom: 1px solid #f0f2f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .page-title h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .status-badge {
+            background: #e6f7e6;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Chat messages container (mock) */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            background: #fefefe;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            max-width: 85%;
+            animation: fadeInUp 0.25s ease;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .user .avatar {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 8px rgba(79,70,229,0.2);
+        }
+
+        .ai .avatar {
+            background: #f1f3f4;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .bubble {
+            background: white;
+            padding: 14px 20px;
+            border-radius: 24px;
+            border-top-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid #edf2f7;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .user .bubble {
+            background: linear-gradient(145deg, #4f46e5, #6b21a5);
+            color: white;
+            border: none;
+            border-top-right-radius: 6px;
+        }
+
+        /* Input area */
+        .input-area {
+            padding: 20px 28px 28px;
+            background: white;
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .input-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 48px;
+            display: flex;
+            align-items: center;
+            padding: 6px 8px 6px 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
+        }
+
+        .input-container:focus-within {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .input-container input {
+            flex: 1;
+            border: none;
+            padding: 14px 0;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-container button {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 40px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-container button:hover {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+        }
+
+        .info-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8e9baf;
+            margin-top: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                height: 100%;
+                transition: 0.2s ease;
+                z-index: 100;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                margin-right: 16px;
+                cursor: pointer;
+            }
+            .main-area {
+                width: 100%;
+            }
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        /* overlay mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 90;
+        }
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Sidebar Histórico -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Sexta-Feira AI</h1>
+                    <p>inteligência criativa</p>
+                </div>
+            </div>
+            <div class="search-history">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchHistoryInput" placeholder="Buscar conversas...">
+            </div>
+        </div>
+        <div class="history-list" id="historyList">
+            <!-- itens serão gerados via JS (mock front-end) -->
+        </div>
+        <div class="sidebar-footer">
+            <button class="new-chat-btn" id="newChatBtn"><i class="fas fa-plus-circle"></i> Nova conversa</button>
+        </div>
+    </aside>
+
+    <!-- Overlay mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Área Principal -->
+    <main class="main-area">
+        <div class="top-bar">
+            <div style="display: flex; align-items: center;">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <div class="page-title">
+                    <h2><i class="fas fa-comment-dots" style="color: #4f46e5; margin-right: 8px;"></i> Assistente Sexta-Feira</h2>
+                </div>
+            </div>
+            <div class="status-badge">
+                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Online · Modo criativo
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Mensagens mock serão inseridas -->
+            <div class="message ai">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="bubble">Olá! Eu sou o Sexta-Feira AI. Como posso ajudar você hoje? Explore novas ideias, faça perguntas ou apenas converse. Tudo é simulado para demonstração ✨</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <input type="text" id="messageInput" placeholder="Escreva sua mensagem para a IA...">
+                <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div class="info-note">
+                <i class="fas fa-microchip"></i> Interface demonstrativa — interações ilustrativas de front-end
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // ---------------------- MOCK DE DADOS (NÃO FUNCIONAL APENAS VISUAL) ----------------------
+    // Histórico de conversas (front-end estático + interações visuais)
+    let conversations = [
+        { id: 1, title: "Ideias para startup de IA", date: "Hoje, 14:32", preview: "Como posso criar um MVP...", messages: [] },
+        { id: 2, title: "Explicar transformers", date: "Ontem, 09:15", preview: "O que são transformers no deep learning?", messages: [] },
+        { id: 3, title: "Roteiro de aprendizado", date: "02/04/2025", preview: "Melhor rota para estudar IA", messages: [] },
+        { id: 4, title: "Prompt criativo: poesia futurista", date: "01/04/2025", preview: "Crie um poema sobre cidades inteligentes", messages: [] },
+        { id: 5, title: "Dicas de UI/UX para chatbots", date: "30/03/2025", preview: "Quais padrões de design?", messages: [] }
+    ];
+
+    // Simular algumas mensagens pré-definidas para demonstrar o visual
+    // Mas manteremos a exibição de conversa atual apenas com as mensagens já mostradas (mock)
+    let currentConversationId = 1;  // conversa ativa (visual)
+
+    // função para popular sidebar com histórico + busca
+    function renderHistory(filterText = "") {
+        const historyContainer = document.getElementById('historyList');
+        if (!historyContainer) return;
+        let filtered = conversations.filter(conv =>
+            conv.title.toLowerCase().includes(filterText.toLowerCase()) ||
+            conv.preview.toLowerCase().includes(filterText.toLowerCase())
+        );
+        if (filtered.length === 0) {
+            historyContainer.innerHTML = `<div style="text-align:center; padding: 24px; color:#8c9ab3;"><i class="fas fa-inbox"></i><br>Nenhuma conversa encontrada</div>`;
+            return;
+        }
+        historyContainer.innerHTML = filtered.map(conv => `
+            <div class="history-item ${currentConversationId === conv.id ? 'active' : ''}" data-id="${conv.id}">
+                <div class="history-icon"><i class="fas fa-message"></i></div>
+                <div class="history-content">
+                    <div class="history-title">${escapeHtml(conv.title)}</div>
+                    <div class="history-date"><i class="far fa-clock"></i> ${conv.date}</div>
+                    <div style="font-size:0.7rem; color:#6c7a91; margin-top: 4px;">${escapeHtml(conv.preview.substring(0, 45))}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Adicionar eventos de clique nos itens (para mudar visual e mostrar "conversa diferente")
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const id = parseInt(item.dataset.id);
+                if (!isNaN(id)) {
+                    setActiveConversation(id);
+                }
+            });
+        });
+    }
+
+    function setActiveConversation(id) {
+        currentConversationId = id;
+        renderHistory(document.getElementById('searchHistoryInput')?.value || "");
+        updateMainChatPreview(id);
+        // também fechar sidebar no mobile se estiver aberto
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+    }
+
+    // Atualizar área de chat principal com MOCK de mensagens (por conversa)
+    // apenas demonstrativo: cada conversa terá um conjunto pré-definido de mensagens ilustrativas
+    const conversationMessagesMock = {
+        1: [
+            { role: "ai", content: "Olá! Eu sou o Sexta-Feira AI. Como posso ajudar você hoje? Explore novas ideias, faça perguntas ou apenas converse. Tudo é simulado para demonstração ✨" },
+            { role: "user", content: "Quero ideias para uma startup de IA focada em saúde mental" },
+            { role: "ai", content: "Excelente! Você pode criar um assistente emocional baseado em análise de sentimentos, integrado com aplicativos de bem-estar, usando LLMs para gerar suporte motivacional diário. Que tal começar com um MVP de escuta ativa?" }
+        ],
+        2: [
+            { role: "ai", content: "Olá! Quer saber sobre transformers? É uma arquitetura inovadora para processamento de sequências, usada no GPT, BERT..." },
+            { role: "user", content: "Explique de forma simples." },
+            { role: "ai", content: "Imagine um mecanismo de atenção que olha para todas as palavras de uma frase ao mesmo tempo, capturando relações complexas. Revolucionou a NLP!" }
+        ],
+        3: [
+            { role: "ai", content: "Para aprender IA, sugiro: Python, matemática básica, depois cursos como Fast.ai ou Andrew Ng. Está preparado?" },
+            { role: "user", content: "Qual a melhor ordem de tópicos?" },
+            { role: "ai", content: "1. Álgebra linear, 2. Cálculo, 3. Estatística, 4. Machine Learning, 5. Deep Learning. Simule projetos práticos." }
+        ],
+        4: [
+            { role: "ai", content: "Vamos criar um poema futurista? 'Nos arranha-céus de dados e luz, a cidade sábia floresce, cada pulso digital reluz...' ✨" },
+            { role: "user", content: "Incrível! mais um verso?" },
+            { role: "ai", content: "Robôs colhem sonhos em pixels de cristal, a primavera sintética é universal." }
+        ],
+        5: [
+            { role: "ai", content: "Dicas de UX para chatbots: use botões sugestivos, feedback visual e linguagem natural fluida. O que mais?" },
+            { role: "user", content: "Histórico lateral é obrigatório?" },
+            { role: "ai", content: "Facilita navegação, mas design responsivo é chave. Aqui a barra lateral é um ótimo exemplo!" }
+        ]
+    };
+
+    // fallback caso alguma conversa não tenha mock
+    function updateMainChatPreview(convId) {
+        const messagesContainer = document.getElementById('chatMessages');
+        if (!messagesContainer) return;
+        let mockMessages = conversationMessagesMock[convId];
+        if (!mockMessages) {
+            // fallback genérico
+            mockMessages = [
+                { role: "ai", content: `Bem-vindo à conversa "${conversations.find(c => c.id === convId)?.title || 'Conversa'}"` },
+                { role: "user", content: "Esta é uma demonstração visual." },
+                { role: "ai", content: "Todos os elementos mostram a interface rica e inovadora do Sexta-Feira AI." }
+            ];
+        }
+        // Limpa e insere novas mensagens
+        messagesContainer.innerHTML = mockMessages.map(msg => `
+            <div class="message ${msg.role === 'user' ? 'user' : 'ai'}">
+                <div class="avatar">${msg.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}</div>
+                <div class="bubble">${escapeHtml(msg.content)}</div>
+            </div>
+        `).join('');
+        // scroll para o final
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Função para adicionar nova mensagem (apenas visual, sem funcionalidade real)
+    function simulateNewUserMessage(text) {
+        if (!text.trim()) return;
+        // Adiciona visualmente uma mensagem de usuário no chat ativo (apenas mock sem lógica IA persistente)
+        const messagesContainer = document.getElementById('chatMessages');
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'message user';
+        userMessageDiv.innerHTML = `
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="bubble">${escapeHtml(text)}</div>
+        `;
+        messagesContainer.appendChild(userMessageDiv);
+        // setTimeout para adicionar resposta automática da IA (simulada, só front)
+        setTimeout(() => {
+            const aiResponse = document.createElement('div');
+            aiResponse.className = 'message ai';
+            let fakeAnswer = `Obrigado pela mensagem! ⚡ Sexta-Feira IA processaria: "${text.substring(0, 70)}..." (modo demonstrativo - interface visual completa)`;
+            aiResponse.innerHTML = `
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="bubble">${escapeHtml(fakeAnswer)}</div>
+            `;
+            messagesContainer.appendChild(aiResponse);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Atualiza o preview do histórico da conversa atual para refletir última mensagem (frontend mock)
+            const currentConv = conversations.find(c => c.id === currentConversationId);
+            if (currentConv) {
+                currentConv.preview = text.length > 45 ? text.substring(0, 42)+"..." : text;
+                currentConv.date = "agora";
+                renderHistory(document.getElementById('searchHistoryInput')?.value || "");
+            }
+        }, 400);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // helper para escapar HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Evento de nova conversa
+    function createNewConversation() {
+        const newId = Date.now();
+        const newTitle = `Conversa ${conversations.length + 1}`;
+        const newConv = {
+            id: newId,
+            title: newTitle,
+            date: "Agora",
+            preview: "Iniciando novo diálogo...",
+            messages: []
+        };
+        conversations.unshift(newConv);
+        currentConversationId = newId;
+        renderHistory(document.getElementById('searchHistoryInput')?.value || "");
+        // set chat messages vazio com mensagem inicial da IA
+        const messagesContainer = document.getElementById('chatMessages');
+        messagesContainer.innerHTML = `
+            <div class="message ai">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="bubble">Nova conversa iniciada! Como posso ajudá-lo hoje? 🚀</div>
+            </div>
+        `;
+        // Adicionar ao conversationMessagesMock para manter visual
+        conversationMessagesMock[newId] = [
+            { role: "ai", content: "Nova conversa iniciada! Como posso ajudá-lo hoje? 🚀" }
+        ];
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+    }
+
+    // Evento de busca
+    const searchInput = document.getElementById('searchHistoryInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderHistory(e.target.value);
+        });
+    }
+
+    // Botão nova conversa
+    const newBtn = document.getElementById('newChatBtn');
+    if (newBtn) newBtn.addEventListener('click', createNewConversation);
+
+    // Envio de mensagem (simulação não funcional, apenas front-end)
+    const sendBtn = document.getElementById('sendBtn');
+    const msgInput = document.getElementById('messageInput');
+    function handleSend() {
+        const msg = msgInput.value.trim();
+        if (msg === "") return;
+        simulateNewUserMessage(msg);
+        msgInput.value = "";
+    }
+    if (sendBtn) sendBtn.addEventListener('click', handleSend);
+    if (msgInput) {
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+    }
+
+    // Menu responsivo
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlayDiv = document.getElementById('overlay');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlayDiv.classList.toggle('active');
+        });
+        overlayDiv.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlayDiv.classList.remove('active');
+        });
+    }
+
+    // Inicializar
+    renderHistory("");
+    updateMainChatPreview(currentConversationId);
+    // ajuste mobile: esconder sidebar ao carregar se necessário
+    if (window.innerWidth <= 768) {
+        sidebar.classList.remove('open');
+        overlayDiv.classList.remove('active');
+    } else {
+        sidebar.style.left = ''; // garante posição desktop
+    }
+</script>
+</body>
+</html>
